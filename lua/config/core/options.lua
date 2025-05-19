@@ -101,7 +101,6 @@ end
 --let g:node_host_prog = 'C:\\ProgramData\\nvm\\v20.11.1\\node.exe'
 --]])
 --
-vim.g.node_host_prog = "C:\\ProgramData\\nvm\\v20.17.0\\node.exe"
 
 --Shell usage
 vim.opt.shell = "pwsh"
