@@ -310,3 +310,114 @@ Some pluggins to try:
 The structre of this config was based on [yashguptaz](https://github.com/yashguptaz/)'s [config](https://github.com/yashguptaz/nvy) and tutorial which helped me understand the basics of using Lua with Neovim.
 
 I've also stolen code from different sources which means it might be hard to acknowledge all of them explicitly though most of them are from the associated plugin's documentation.
+
+## 🔍 Compilando FZF y Telescope para búsqueda avanzada
+
+Para aprovechar al máximo las capacidades de búsqueda avanzada en Neovim, es necesario compilar correctamente los componentes nativos de FZF y Telescope. Estas herramientas mejoran significativamente la velocidad de búsqueda en comparación con las implementaciones en puro Lua.
+
+### Requisitos previos para Windows
+
+1. **GCC y Make**: Necesarios para compilar los componentes nativos.
+   ```powershell
+   choco install mingw make
+   ```
+
+2. **CMake**: Requerido para algunos procesos de compilación.
+   ```powershell
+   choco install cmake
+   ```
+
+3. **Rust** (opcional para ripgrep, una alternativa rápida para búsqueda de texto):
+   ```powershell
+   choco install rust
+   ```
+
+### Compilando telescope-fzf-native
+
+El plugin `telescope-fzf-native.nvim` requiere compilación para funcionar correctamente:
+
+1. **En Windows (PowerShell)**:
+   ```powershell
+   # Navegar al directorio del plugin
+   cd $env:LOCALAPPDATA\nvim-data\lazy\telescope-fzf-native.nvim
+   
+   # Compilar usando make
+   make
+   ```
+
+2. **En Linux/macOS**:
+   ```bash
+   # Navegar al directorio del plugin
+   cd ~/.local/share/nvim/lazy/telescope-fzf-native.nvim
+   # o en macOS
+   cd ~/.local/share/nvim/lazy/telescope-fzf-native.nvim
+   
+   # Compilar
+   make
+   ```
+
+En caso de problemas durante la compilación en Windows, puedes intentar con CMake:
+   ```powershell
+   # Navegar al directorio del plugin
+   cd $env:LOCALAPPDATA\nvim-data\lazy\telescope-fzf-native.nvim
+   
+   # Crear y entrar al directorio build
+   mkdir build
+   cd build
+   
+   # Configurar y compilar con CMake
+   cmake -G "MinGW Makefiles" ..
+   cmake --build .
+   ```
+
+### Herramientas complementarias recomendadas
+
+Para mejorar la experiencia de búsqueda, se recomienda instalar:
+
+1. **ripgrep**: Una alternativa rápida a grep.
+   ```powershell
+   # Windows
+   choco install ripgrep
+   ```
+   ```bash
+   # Linux
+   sudo apt install ripgrep
+   # macOS
+   brew install ripgrep
+   ```
+
+2. **fd**: Un reemplazo más rápido y amigable para `find`.
+   ```powershell
+   # Windows
+   choco install fd
+   ```
+   ```bash
+   # Linux
+   sudo apt install fd-find
+   # macOS
+   brew install fd
+   ```
+
+### Verificando la instalación
+
+Para verificar que telescope-fzf-native está correctamente compilado e instalado:
+
+1. Abre Neovim
+2. Ejecuta el siguiente comando:
+   ```
+   :lua print(require('telescope').extensions.fzf.loaded)
+   ```
+
+Si muestra `true`, la extensión está cargada correctamente.
+
+### Solución de problemas comunes
+
+- **Error "fzf no se pudo cargar"**: Verifica que la compilación se realizó correctamente usando el procedimiento anterior.
+  
+- **Rendimiento lento en búsquedas**: Asegúrate de que ripgrep está instalado y configurado correctamente en tu PATH.
+
+- **Errores en Windows**: En algunos casos, puede ser necesario compilar manualmente con GCC:
+  ```powershell
+  cd $env:LOCALAPPDATA\nvim-data\lazy\telescope-fzf-native.nvim
+  gcc -O3 -Wall -Werror -fpic -std=gnu99 -shared src/fzf.c -o build/libfzf.dll
+  ```

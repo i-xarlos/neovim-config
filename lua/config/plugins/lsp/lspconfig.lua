@@ -103,23 +103,33 @@ return {
 			lsp.preset("recommended")
 
 			lsp.on_attach(function()
-				-- Change the Diagnostic symbols in the sign column (gutter)
-				-- (not in youtube nvim video)
-				local signs = { Error = " ", Warn = " ", Hint = "", Info = " " }
+				-- Configuración moderna para los íconos de diagnóstico
+				local signs = { Error = " ", Warn = " ", Hint = "", Info = " " }
 				for type, icon in pairs(signs) do
 					local hl = "DiagnosticSign" .. type
+					-- Configuración de resaltado usando la API moderna
+					vim.api.nvim_set_hl(0, hl, { default = true })
+					-- Define la señal (sigue siendo necesario)
 					vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 				end
-				-- enable diagnostic
+				-- Configuración de diagnósticos
 				vim.diagnostic.config({
 					virtual_text = true,
+					signs = true,
+					underline = true,
+					severity_sort = true,
 				})
 			end)
 
 			local keymap = vim.keymap -- for conciseness
 			local opts = { noremap = true, silent = true }
-			local on_attach = function(_, bufnr)
+			local on_attach = function(client, bufnr)
 				opts.buffer = bufnr
+				local max_line_count = 5000
+				local line_count = vim.api.nvim_buf_line_count(bufnr)
+				if line_count > max_line_count then
+					client.stop()
+				end
 
 				-- set keybinds
 				opts.desc = "Show LSP references"
@@ -179,6 +189,18 @@ return {
 			lspconfig["ts_ls"].setup({
 				capabilities = capabilities,
 				on_attach = on_attach,
+				--		root_dir = require("lspconfig.util").root_pattern(".git"),
+				root_dir = function(fname)
+					return require("lspconfig.util").root_pattern("tsconfig.json", "package.json")(fname)
+				end,
+				settings = {
+					ts_ls = {
+						exclude = { "node_modules", "dist", "build", ".git" },
+					},
+				},
+				flags = {
+					debounce_text_changes = 150,
+				},
 			})
 
 			-- configure css server
@@ -255,6 +277,36 @@ return {
 						},
 					},
 				},
+			})
+			
+			-- Configuración para cerrar ventanas flotantes de documentación con Esc
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = { "help", "markdown" },
+				callback = function(event)
+					-- Solo aplica para ventanas flotantes de documentación
+					local win = vim.api.nvim_get_current_win()
+					local config = vim.api.nvim_win_get_config(win)
+					if config.relative ~= "" then
+						-- Mapear <esc> para cerrar la ventana flotante
+						vim.keymap.set("n", "<Esc>", function()
+							vim.api.nvim_win_close(win, true)
+						end, { buffer = event.buf, silent = true, noremap = true })
+					end
+				end,
+			})
+			
+			-- Autocomando global para cerrar ventanas flotantes con Esc
+			vim.api.nvim_create_autocmd("WinEnter", {
+				callback = function()
+					local win = vim.api.nvim_get_current_win()
+					local config = vim.api.nvim_win_get_config(win)
+					if config.relative ~= "" then
+						-- Si es una ventana flotante, mapear Esc para cerrarla
+						vim.keymap.set("n", "<Esc>", function()
+							vim.api.nvim_win_close(win, true)
+						end, { buffer = 0, silent = true, noremap = true })
+					end
+				end,
 			})
 		end,
 	},
