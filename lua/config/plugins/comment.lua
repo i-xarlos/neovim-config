@@ -57,6 +57,25 @@ return {
         end
         vim.lsp.buf.hover()
       end, { desc = 'Toggle documentación flotante LSP' })
+      
+      -- Cerrar ventanas flotantes con Esc
+      vim.keymap.set('n', '<Esc>', function()
+        local closed = false
+        -- Buscar y cerrar ventanas flotantes
+        for _, win in ipairs(vim.api.nvim_list_wins()) do
+          local config = vim.api.nvim_win_get_config(win)
+          if config.relative ~= '' then
+            -- Es una ventana flotante
+            vim.api.nvim_win_close(win, true)
+            closed = true
+          end
+        end
+        
+        -- Si no se cerró ninguna ventana, ejecutar comportamiento normal de Esc
+        if not closed then
+          vim.cmd([[call feedkeys("\<Esc>", 'n')]])
+        end
+      end, { desc = 'Cerrar ventana flotante o Esc normal', noremap = true })
     end,
   },
 }

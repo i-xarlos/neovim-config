@@ -278,6 +278,36 @@ return {
 					},
 				},
 			})
+			
+			-- Configuración para cerrar ventanas flotantes de documentación con Esc
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = { "help", "markdown" },
+				callback = function(event)
+					-- Solo aplica para ventanas flotantes de documentación
+					local win = vim.api.nvim_get_current_win()
+					local config = vim.api.nvim_win_get_config(win)
+					if config.relative ~= "" then
+						-- Mapear <esc> para cerrar la ventana flotante
+						vim.keymap.set("n", "<Esc>", function()
+							vim.api.nvim_win_close(win, true)
+						end, { buffer = event.buf, silent = true, noremap = true })
+					end
+				end,
+			})
+			
+			-- Autocomando global para cerrar ventanas flotantes con Esc
+			vim.api.nvim_create_autocmd("WinEnter", {
+				callback = function()
+					local win = vim.api.nvim_get_current_win()
+					local config = vim.api.nvim_win_get_config(win)
+					if config.relative ~= "" then
+						-- Si es una ventana flotante, mapear Esc para cerrarla
+						vim.keymap.set("n", "<Esc>", function()
+							vim.api.nvim_win_close(win, true)
+						end, { buffer = 0, silent = true, noremap = true })
+					end
+				end,
+			})
 		end,
 	},
 }
