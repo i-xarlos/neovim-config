@@ -22,9 +22,8 @@ return {
 					enable = true,
 				},
 				-- ensure these language parsers are installed
-				ensure_installed = {},
-				sync_install = false, -- No instalar parsers en cada arranque
-				auto_install = false, -- Desactivar instalación automática para controlar mejor
+				ensure_installed = {},				sync_install = false, -- Don't install parsers on every startup
+				auto_install = false, -- Disable automatic installation for better control
 				incremental_selection = {
 					enable = true,
 					keymaps = {
@@ -35,9 +34,7 @@ return {
 					},
 				},
 				parser_install_dir = vim.fn.stdpath("data") .. "/treesitter_cache",
-			})
-
-			-- Configuración recomendada para ts_context_commentstring (fuera de nvim-treesitter)
+			})			-- Recommended configuration for ts_context_commentstring (outside of nvim-treesitter)
 			pcall(function()
 				require('ts_context_commentstring').setup {}
 			end)

@@ -1,32 +1,32 @@
-# 🚀 Neovim Basic
+# 🚀 Neovim Development Environment
 
-- Typescript / Javascript / React and more
-- Package manager [Lazy.nvim](https://github.com/folke/lazy.nvim)
-- LSP
-- Prettier
-- Snippets
-- Luanine
-- Git
-- Linter
-- ...
+A powerful and efficient Neovim configuration designed for modern web development, featuring:
+
+- TypeScript, JavaScript, and React support
+- [Lazy.nvim](https://github.com/folke/lazy.nvim) package management
+- LSP (Language Server Protocol) integration
+- Code formatting with Prettier
+- Integrated snippets
+- Status line with Lualine
+- Git integration
+- Comprehensive linting
+- And much more...
 
 ## About
 
-This configuration is based on [josean-dev](https://github.com/josean-dev/dev-environment-files), [ThePrimeagen](https://github.com/ThePrimeagen/init.lua/tree/249f3b14cc517202c80c6babd0f9ec548351ec71/after/plugin) and [miltonllera/config](https://github.com/miltonllera/neovim-config), however some shortcuts have been changed and some plugins have been organized to work on projects with typescript, javascript and react.
+This configuration builds upon the excellent work of [josean-dev](https://github.com/josean-dev/dev-environment-files), [ThePrimeagen](https://github.com/ThePrimeagen/init.lua), and [miltonllera/config](https://github.com/miltonllera/neovim-config). I've customized the keybindings and reorganized plugins to create an optimal environment for TypeScript, JavaScript, and React development.
 
-## History
+## Background
 
-I have been using [coc.nvim](https://github.com/neoclide/coc.nvim) for the last three years and decided to migrate to `Lua` and I am really happy with the improvement and control of each of your utilities.
-I added and configured the plugins in the way that I have used them before, that is why this fork will remain independent.
+After three years of using [coc.nvim](https://github.com/neoclide/coc.nvim), I transitioned to a pure Lua configuration. This change has significantly improved both performance and configurability, giving me better control over each component.
 
-The template that [Milton](https://github.com/miltonllera/neovim-config) left, which has given the main focus to Linux and Mac. I have expanded the guide for `Windows` since it is my development environment.
+While the original template by [Milton](https://github.com/miltonllera/neovim-config) focused on Linux and macOS, I've expanded it with comprehensive Windows support, as that's my primary development environment.
 
-I have added some plugins recommended by the guys from [lunarVim](https://www.lunarvim.org/) and added some validations and plugins they use, achieving a very stable and agile version.
+I've also incorporated select plugins and optimizations from [LunarVim](https://www.lunarvim.org/), resulting in a stable, agile development environment that combines the best of multiple worlds.
 
-A [Neovim](https://github.com/neovim/neovim) configuration using Lua, with the minimal number of pluggins I need for programming.
-Different language servers available through the LSP protocol provide code completion and analysis.
+This configuration leverages the power of Lua with a carefully curated set of plugins, providing essential features for modern programming through the LSP protocol for intelligent code completion and analysis.
 
-This readme exist so I don't have to remember how to do all these things when setting up a new machine.
+This documentation serves as a comprehensive setup guide for new machine configurations.
 
 ## 🛠 Setting up
 
@@ -311,9 +311,9 @@ The structre of this config was based on [yashguptaz](https://github.com/yashgup
 
 I've also stolen code from different sources which means it might be hard to acknowledge all of them explicitly though most of them are from the associated plugin's documentation.
 
-## 🔍 Compilando FZF y Telescope para búsqueda avanzada
+## 🔍 Compiling FZF and Telescope for Advanced Search
 
-Para aprovechar al máximo las capacidades de búsqueda avanzada en Neovim, es necesario compilar correctamente los componentes nativos de FZF y Telescope. Estas herramientas mejoran significativamente la velocidad de búsqueda en comparación con las implementaciones en puro Lua.
+To maximize the advanced search capabilities in Neovim, it's essential to properly compile the native components of FZF and Telescope. These tools significantly improve search speed compared to pure Lua implementations.
 
 ### Requisitos previos para Windows
 

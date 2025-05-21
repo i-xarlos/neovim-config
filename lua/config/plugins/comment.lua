@@ -24,18 +24,17 @@ return {
         -- gb[motion]: Comentar bloque motion
         
         -- Optimizaciones para archivos grandes
-        throttle = true, -- Limitar actualizaciones frecuentes
-      })
-        -- Verificar si el archivo es grande para desactivar funcionalidades
+        throttle = true, -- Limit frequent updates
+      })      -- Check if file is large to disable certain features
       vim.api.nvim_create_autocmd("BufReadPost", {
         callback = function(ev)
           local max_filesize = 500 * 1024 -- 500 KB
           local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(ev.buf))
           
           if ok and stats and stats.size > max_filesize then
-            -- Desactivar algunas funcionalidades avanzadas para archivos grandes
+            -- Disable some advanced features for large files
             vim.b[ev.buf].ts_context_commentstring_disabled = true
-            -- Mantener el spell checking activo incluso para archivos grandes
+            -- Keep spell checking active even for large files
             vim.opt_local.spell = true
           end
         end
@@ -56,7 +55,7 @@ return {
           end
         end
         vim.lsp.buf.hover()
-      end, { desc = 'Toggle documentación flotante LSP' })
+      end, { desc = 'Toggle LSP floating documentation' })
       
       -- Cerrar ventanas flotantes con Esc
       vim.keymap.set('n', '<Esc>', function()
@@ -75,7 +74,7 @@ return {
         if not closed then
           vim.cmd([[call feedkeys("\<Esc>", 'n')]])
         end
-      end, { desc = 'Cerrar ventana flotante o Esc normal', noremap = true })
+      end, { desc = 'Close floating window or normal Esc', noremap = true })
     end,
   },
 }
