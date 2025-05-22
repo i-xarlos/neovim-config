@@ -224,6 +224,47 @@ The auto-complete functionality is achieved by using `nvim-cmp` to attach the re
 
 Inline error messages are disabled in the current configuration. They create a lot of clutter. To enable them back, comment the code on line 34 of `lua/options.lua`. This is a `nvim` option related to it's `lsp` interface, not something provided by the servers themselves.
 
+## 🤖 GitHub Copilot Integration
+
+This configuration uses the recommended integration for GitHub Copilot with Neovim:
+
+- The plugins [`zbirenbaum/copilot.lua`](https://github.com/zbirenbaum/copilot.lua) and [`zbirenbaum/copilot-cmp`](https://github.com/zbirenbaum/copilot-cmp) are used.
+- Copilot suggestions appear as part of the nvim-cmp completion menu, just like any other completion source.
+- You can accept Copilot suggestions with `<Tab>` or `<CR>` (Enter), exactly as you do with LSP or snippet suggestions.
+- No special keybindings or hacks are needed—everything is unified in the completion menu.
+
+**How it works:**
+1. When you trigger completion (automatically or with `<C-Space>`), Copilot suggestions will show up in the menu, usually with a special icon or label.
+2. Use `<Tab>`/`<S-Tab>` to navigate, and `<CR>` or `<Tab>` to accept any suggestion, including Copilot's.
+3. Inline ghost text is disabled for a cleaner experience.
+
+**Plugin configuration example:**
+```lua
+return {
+  {
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    build = ":Copilot auth",
+    config = function()
+      require("copilot").setup({
+        suggestion = { enabled = false }, -- disables inline suggestions
+        panel = { enabled = false },
+      })
+      vim.g.copilot_no_tab_map = true
+    end,
+  },
+  {
+    "zbirenbaum/copilot-cmp",
+    dependencies = { "zbirenbaum/copilot.lua" },
+    config = function()
+      require("copilot_cmp").setup()
+    end,
+  },
+}
+```
+
+This approach is robust, future-proof, and recommended by the Neovim and Copilot communities.
+
 ## Web-dev Icons
 
 To visualize fancy icons and separators, a patched font must be installed. [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts) has many already patched and offers instructions on how to create new ones (I don't recommend). To install a patched font follow these instructions:

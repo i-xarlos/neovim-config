@@ -1,16 +1,21 @@
 return {
-	"nvim-cmp",
-	dependencies = {
-		{
-			"github/copilot.vim",
-		},
+	{
+		"zbirenbaum/copilot.lua",
+		cmd = "Copilot",
+		build = ":Copilot auth",
+		config = function()
+			require("copilot").setup({
+				suggestion = { enabled = false }, -- disables inline suggestions
+				panel = { enabled = false },
+			})
+			vim.g.copilot_no_tab_map = true
+		end,
 	},
-	opts = function(_, opts)
-		opts.sources = opts.sources or {}
-		table.insert(opts.sources, 1, {
-			name = "Copilot",
-			group_index = 1,
-			priority = 100,
-		})
-	end,
+	{
+		"zbirenbaum/copilot-cmp",
+		dependencies = { "zbirenbaum/copilot.lua" },
+		config = function()
+			require("copilot_cmp").setup()
+		end,
+	},
 }
