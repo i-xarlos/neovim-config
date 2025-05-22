@@ -100,22 +100,25 @@ return {
 			local lsp = require("lsp-zero")
 			lsp.extend_lspconfig()
 
-			lsp.preset("recommended")
-
-			lsp.on_attach(function()
+			lsp.preset("recommended")			lsp.on_attach(function()
 				-- Configuración moderna para los íconos de diagnóstico
 				local signs = { Error = " ", Warn = " ", Hint = "", Info = " " }
 				for type, icon in pairs(signs) do
 					local hl = "DiagnosticSign" .. type
 					-- Configuración de resaltado usando la API moderna
 					vim.api.nvim_set_hl(0, hl, { default = true })
-					-- Define la señal (sigue siendo necesario)
-					vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 				end
-				-- Configuración de diagnósticos
+				-- Configuración moderna de diagnósticos con iconos
 				vim.diagnostic.config({
 					virtual_text = true,
-					signs = true,
+					signs = {
+						text = {
+							[vim.diagnostic.severity.ERROR] = signs.Error,
+							[vim.diagnostic.severity.WARN] = signs.Warn,
+							[vim.diagnostic.severity.HINT] = signs.Hint,
+							[vim.diagnostic.severity.INFO] = signs.Info,
+						},
+					},
 					underline = true,
 					severity_sort = true,
 				})

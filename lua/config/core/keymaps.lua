@@ -18,6 +18,12 @@ keymap.set("n", "<A-j>", "<C-w>j")
 keymap.set("n", "<A-k>", "<C-w>k")
 keymap.set("n", "<A-l>", "<C-w>l")
 
+-- Move around windows with Windows key
+keymap.set("n", "<D-h>", "<C-w>h", { desc = "Move to left window" })
+keymap.set("n", "<D-j>", "<C-w>j", { desc = "Move to bottom window" })
+keymap.set("n", "<D-k>", "<C-w>k", { desc = "Move to top window" })
+keymap.set("n", "<D-l>", "<C-w>l", { desc = "Move to right window" })
+
 -- Switch buffers (needs nvim-bufferline)
 keymap.set("n", "<TAB>", ":BufferLineCycleNext<CR>")
 keymap.set("n", "<S-TAB>", ":BufferLineCyclePrev<CR>")
