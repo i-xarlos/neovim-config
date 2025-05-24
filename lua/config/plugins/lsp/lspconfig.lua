@@ -98,17 +98,17 @@ return {
 		},
 		config = function()
 			local lsp = require("lsp-zero")
-			lsp.extend_lspconfig()
-
-			lsp.preset("recommended")			lsp.on_attach(function()
-				-- Configuración moderna para los íconos de diagnóstico
+			lsp.extend_lspconfig()			
+			lsp.preset("recommended")			
+			lsp.on_attach(function()
+				-- Modern configuration for diagnostic icons
 				local signs = { Error = " ", Warn = " ", Hint = "", Info = " " }
 				for type, icon in pairs(signs) do
 					local hl = "DiagnosticSign" .. type
-					-- Configuración de resaltado usando la API moderna
+					-- Highlighting configuration using the modern API
 					vim.api.nvim_set_hl(0, hl, { default = true })
 				end
-				-- Configuración moderna de diagnósticos con iconos
+				-- Modern diagnostic configuration with icons
 				vim.diagnostic.config({
 					virtual_text = true,
 					signs = {
@@ -125,13 +125,34 @@ return {
 			end)
 
 			local keymap = vim.keymap -- for conciseness
-			local opts = { noremap = true, silent = true }
-			local on_attach = function(client, bufnr)
+			local opts = { noremap = true, silent = true }					local on_attach = function(client, bufnr)
 				opts.buffer = bufnr
+				
+				-- Performance optimizations
 				local max_line_count = 5000
 				local line_count = vim.api.nvim_buf_line_count(bufnr)
+				
+				-- Disable LSP for large files
 				if line_count > max_line_count then
 					client.stop()
+					vim.notify("LSP stopped for this file (too large)", vim.log.levels.WARN)
+					return
+				end
+				
+				-- Disable heavy LSP features based on client type
+				if client.name == "tsserver" or client.name == "ts_ls" then
+					-- Limit TypeScript features to improve performance
+					client.server_capabilities.documentFormattingProvider = false
+					
+					-- Use less frequent diagnostics for TypeScript/JavaScript files
+					if vim.bo[bufnr].filetype == "typescript" or vim.bo[bufnr].filetype == "javascript" then
+						vim.diagnostic.config({update_in_insert = false}, bufnr)
+					end
+				end
+				
+				-- Disable inline formatting for heavy clients
+				if client.name == "tsserver" or client.name == "ts_ls" or client.name == "eslint" then
+					client.server_capabilities.documentRangeFormattingProvider = false
 				end
 
 				-- set keybinds
@@ -186,9 +207,7 @@ return {
 			lspconfig["html"].setup({
 				capabilities = capabilities,
 				on_attach = on_attach,
-			})
-
-			-- configure typescript server with plugin
+			})			-- configure typescript server with plugin
 			lspconfig["ts_ls"].setup({
 				capabilities = capabilities,
 				on_attach = on_attach,
@@ -198,11 +217,21 @@ return {
 				end,
 				settings = {
 					ts_ls = {
-						exclude = { "node_modules", "dist", "build", ".git" },
+						exclude = { "node_modules", "dist", "build", ".git", "coverage", ".next", ".nuxt" },
+						-- Reducir la cantidad de información que TypeScript analiza
+						suggestionActions = { enabled = false },
+						completions = { completeFunctionCalls = false },
+						implicitProjectConfiguration = {
+							checkJs = false, -- Deshabilitar comprobación de JS si causa problemas de rendimiento
+						},
+						-- Opciones de optimización para proyectos grandes
+						maxTsServerMemory = 3072, -- Limitar memoria del servidor TS a 3GB
+						disableAutomaticTypeAcquisition = true, -- Evitar descargas automáticas de tipos
 					},
 				},
 				flags = {
-					debounce_text_changes = 150,
+					debounce_text_changes = 250, -- Aumentado de 150 a 250ms
+					allow_incremental_sync = true,
 				},
 			})
 
@@ -281,36 +310,79 @@ return {
 					},
 				},
 			})
-			
-			-- Configuración para cerrar ventanas flotantes de documentación con Esc
+					-- Configuration to close documentation floating windows with Esc
 			vim.api.nvim_create_autocmd("FileType", {
 				pattern = { "help", "markdown" },
 				callback = function(event)
-					-- Solo aplica para ventanas flotantes de documentación
+					-- Only applies to documentation floating windows
 					local win = vim.api.nvim_get_current_win()
 					local config = vim.api.nvim_win_get_config(win)
 					if config.relative ~= "" then
-						-- Mapear <esc> para cerrar la ventana flotante
+						-- Map <esc> to close the floating window
 						vim.keymap.set("n", "<Esc>", function()
 							vim.api.nvim_win_close(win, true)
 						end, { buffer = event.buf, silent = true, noremap = true })
 					end
 				end,
 			})
-			
-			-- Autocomando global para cerrar ventanas flotantes con Esc
+					-- Global autocommand to close floating windows with Esc
 			vim.api.nvim_create_autocmd("WinEnter", {
 				callback = function()
 					local win = vim.api.nvim_get_current_win()
 					local config = vim.api.nvim_win_get_config(win)
 					if config.relative ~= "" then
-						-- Si es una ventana flotante, mapear Esc para cerrarla
+						-- If it's a floating window, map Esc to close it
 						vim.keymap.set("n", "<Esc>", function()
 							vim.api.nvim_win_close(win, true)
 						end, { buffer = 0, silent = true, noremap = true })
 					end
 				end,
 			})
+			
+			-- Optimization for large projects: disable diagnostics in insert mode
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = {"javascript", "typescript", "javascriptreact", "typescriptreact"},
+				callback = function(ev)
+					-- Disable diagnostics in insert mode for these file types
+					vim.api.nvim_create_autocmd("InsertEnter", {
+						buffer = ev.buf,
+						callback = function()
+							vim.diagnostic.disable(ev.buf)
+						end,
+					})vim.api.nvim_create_autocmd("InsertLeave", {
+						buffer = ev.buf,
+						callback = function()
+							-- Delay diagnostic reactivation to avoid freezing
+							vim.defer_fn(function()
+								vim.diagnostic.enable(ev.buf)
+							end, 300)
+						end,
+					})
+				end,
+			})
+			
+			-- Circuit breaker for LSP operations when the system is overloaded
+			local cpu_usage_threshold = 70 -- percentage
+			local last_check_time = 0
+			local check_interval = 2000 -- ms
+			
+			-- Function to check CPU usage before costly operations
+			_G.check_system_load = function()
+				local current_time = vim.loop.now()
+				if current_time - last_check_time < check_interval then
+					return true -- allow operation if not enough time has passed
+				end
+				
+				-- In a real implementation, you would check system load here
+				-- This is a basic function that always returns true
+				-- A plugin like nvim-health could implement this function properly
+				
+				last_check_time = current_time
+				return true
+			end
+			
+			-- Key to manually restart all LSP servers
+			vim.api.nvim_set_keymap("n", "<leader>lR", "<cmd>LspRestart all<CR>", {noremap = true, silent = true, desc = "Restart all LSP servers"})
 		end,
 	},
 }
