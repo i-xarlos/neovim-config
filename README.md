@@ -181,12 +181,13 @@ This structure is important since Lua will not load files that are not located i
 2. [**`lspconfig`**](https://github.com/neovim/nvim-lspconfig): provides a client for the different language servers using the Language Server Protocol (LSP).
 3. [**`cmp`**](https://github.com/hrsh7th/nvim-cmp): Auto-complete functionality. Recommended by the core Neovim team.
 4. [**`treesitter`**](https://github.com/nvim-treesitter/nvim-treesitter): Syntax highlighting and other functionality.
+   - [**`nvim-treesitter-textobjects`**](https://github.com/nvim-treesitter/nvim-treesitter-textobjects): Syntax-aware text objects, selections, and navigation for Neovim.
 5. [**`NvimTree`**](https://github.com/kyazdani42/nvim-tree.lua): File explorer written in Lua.
 6. [**`gitsigns`**](https://github.com/lewis6991/gitsigns.nvim): Git gutter highlighting and hunk management in buffer.
 7. [**`telescope`**](https://github.com/nvim-telescope/telescope.nvim): Fuzzy finder.
 8. [**`lualine`**](https://github.com/nvim-lualine/lualine.nvim): A status line written in Lua which is similar to `vim-airline`.
 
-There are some more packages that are dependencies of the ones mentioned above, and some for formatting and theming as well. Adding new plugins is simple using the `use` function:
+There are some more packages that are dependencies of the ones mentioned above, and some for formatting and theming as well. Adding new plugins is simple with Lazy.nvim:
 
 ```lua
 return{
@@ -195,24 +196,68 @@ return{
 }
 ```
 
-This will load a plugin with it's standard configuration. For more complex configurations, we create the relevant file in `lua/plugins` (eg. `lua/plugins/foo.lua`) and load it using the require function along with any other option we wish to pass on to the `use` function:
+This will load a plugin with its standard configuration. For more complex configurations, we create the relevant file in `lua/config/plugins` (eg. `lua/config/plugins/foo.lua`) and load it using the require function along with any other option we wish to pass on to the Lazy plugin manager:
 
 ```lua
 return {
   '<author>/<plugin-repo>',
-  config = function() require('plugin/<plugin-name>') end,
-  -- Optionally require other plugins.
-  requires = '<author>/<required-plugin-repo>'
+  config = function() require('config/plugins/<plugin-name>') end,
+  -- Optionally include dependencies
+  dependencies = { '<author>/<required-plugin-repo>' },
   -- Other functionality
 }
 ```
 
-Notice that the file type is omitted from this call.
+### Additional Plugins and Features
 
-Install and update plugins using packer
+This configuration includes many other powerful plugins that enhance the Neovim experience:
+
+#### User Interface and Experience
+
+1. **[alpha-nvim](https://github.com/goolord/alpha-nvim)**: A customizable greeter/dashboard with a sleek custom header and quick-access menu for common actions.
+
+2. **[oil.nvim](https://github.com/stevearc/oil.nvim)**: A file explorer that lets you edit your filesystem like a buffer, providing a more intuitive way to manage files.
+
+3. **[nvim-autopairs](https://github.com/windwp/nvim-autopairs)**: Automatically inserts matching pairs like brackets, quotes, and parentheses.
+
+4. **[nvim-surround](https://github.com/kylechui/nvim-surround)**: Provides mappings to easily delete, change, and add surroundings in pairs.
+
+5. **[dressing.nvim](https://github.com/stevearc/dressing.nvim)**: Improves the UI for inputs and selects in Neovim, making them more visually appealing.
+
+6. **[bufferline.nvim](https://github.com/akinsho/bufferline.nvim)**: A snazzy buffer line (with tabpage integration) for Neovim.
+
+#### Session Management
+
+1. **[auto-session](https://github.com/rmagatti/auto-session)**: Automatic session management with the following shortcuts:
+   - `<leader>wr`: Restore session for current directory
+   - `<leader>ws`: Save session for current directory
+
+#### Code Quality and Enhancement
+
+1. **[nvim-lint](https://github.com/mfussenegger/nvim-lint)**: Asynchronous linting for:
+   - JavaScript/TypeScript/React: ESLint
+   - Python: Pylint
+   - Triggers on file open, write, and when leaving insert mode
+   - Manual trigger: `<leader>l`
+
+2. **[Comment.nvim](https://github.com/numToStr/Comment.nvim)**: Smart code commenting that supports multiple languages and has both line and block comment capabilities.
+
+3. **[vim-ReplaceWithRegister](https://github.com/inkarkat/vim-ReplaceWithRegister)**: Replace text with register contents using motion (gr + motion).
+
+4. **[nerdcommenter](https://github.com/scrooloose/nerdcommenter)**: Easy code commenting with rich features.
+
+5. **[multi-line](https://github.com/mg979/vim-visual-multi)**: Multiple cursors and multiple selection for efficient text editing.
+
+#### Navigation
+
+1. **[vim-tmux-navigator](https://github.com/christoomey/vim-tmux-navigator)**: Seamless navigation between tmux panes and vim splits using the same shortcuts.
+
+### Plugin Management
+
+Install and update plugins using Lazy.nvim:
 
 ```bash
-#nvim command
+# Open Lazy plugin manager
 :Lazy
 ```
 
@@ -264,6 +309,200 @@ return {
 ```
 
 This approach is robust, future-proof, and recommended by the Neovim and Copilot communities.
+
+## 🔄 Code Formatting
+
+This configuration includes automatic code formatting on save for various languages using [conform.nvim](https://github.com/stevearc/conform.nvim), with special optimizations for performance:
+
+### Supported Formatters
+
+- **JavaScript/TypeScript/React**: Prettier
+- **HTML/CSS/JSON/YAML/Markdown**: Prettier
+- **Lua**: StyleLua
+- **Python**: isort + black
+- **Shell Scripts**: shfmt
+
+### Lua Auto-Formatting
+
+Lua files are automatically formatted on save using StyleLua. The configuration includes:
+
+- A custom StyleLua configuration at `~/.config/nvim/utils/linter-config/stylua.toml`
+- Performance optimizations to prevent hangs on large files
+- Format-on-save functionality that respects file size limits
+
+#### Installing StyleLua
+
+Before the auto-formatting can work, you need to install StyleLua:
+
+**Windows (with Chocolatey):**
+```powershell
+choco install stylua -y
+```
+
+**Windows (manual installation):**
+1. Download the latest release from [StyleLua GitHub Releases](https://github.com/JohnnyMorganz/StyLua/releases)
+2. Extract the executable to a directory in your PATH
+3. Verify the installation with `stylua --version`
+
+**macOS (with Homebrew):**
+```bash
+brew install stylua
+```
+
+**Linux:**
+```bash
+cargo install stylua
+```
+
+#### StyleLua Configuration
+
+The formatter is configured through a `stylua.toml` file. This configuration is automatically set up at:
+`~/.config/nvim/utils/linter-config/stylua.toml`
+
+If the configuration file doesn't exist, you can create it manually with the following directory structure:
+
+```
+~/.config/nvim/utils/
+└── linter-config/
+    └── stylua.toml
+```
+
+**Creating the configuration file:**
+
+```powershell
+# Create directories if they don't exist
+New-Item -Path "$env:USERPROFILE\.config\nvim\utils\linter-config" -ItemType Directory -Force
+
+# Create the StyleLua configuration file
+@"
+# stylua.toml
+column_width = 120
+line_endings = "Unix"
+indent_type = "Spaces"
+indent_width = 2
+quote_style = "AutoPreferDouble"
+call_parentheses = "Always"
+collapse_simple_statement = "Never"
+
+[sort_requires]
+enabled = true
+"@ | Out-File -FilePath "$env:USERPROFILE\.config\nvim\utils\linter-config\stylua.toml" -Encoding utf8
+```
+
+**Special commands for Lua:**
+
+- `:StyleLua` - Manually format the current Lua file
+- `:StyleLuaConfig` - Open the StyleLua configuration file
+
+#### How the Lua Formatting Integration Works
+
+The auto-formatting on save for Lua files is implemented through several components:
+
+1. **Conform.nvim Plugin**: The main formatter plugin that handles file formatting
+   ```lua
+   -- In formatting.lua
+   formatters_by_ft = {
+     -- Other languages...
+     lua = { "stylua" },
+   }
+   ```
+
+2. **Custom AutoCmd for Lua Files**: A specific BufWritePre autocmd that triggers StyleLua formatting for Lua files
+   ```lua
+   vim.api.nvim_create_autocmd("BufWritePre", {
+     pattern = "*.lua",
+     callback = function(args)
+       -- Only format if file is not too large
+       -- ...format with stylua...
+     end,
+   })
+   ```
+
+3. **User Commands**: Custom commands to manually format files or edit configuration
+   ```lua
+   -- In commands.lua
+   vim.api.nvim_create_user_command("StyleLua", function()
+     local file = vim.api.nvim_buf_get_name(0)
+     local output = vim.fn.system({ 
+       "stylua", 
+       "--config-path", 
+       vim.fn.expand("~/.config/nvim/utils/linter-config/stylua.toml"), 
+       file 
+     })
+     -- Handle result and reload file
+   end)
+   ```
+
+### Format on Demand
+
+For any supported file type, you can manually trigger formatting with `<leader>f`.
+
+### Performance Optimizations
+
+- Automatic formatting is skipped for very large files (>500KB)
+- Heavy formatters like Prettier have stricter limits (>200KB files are skipped)
+- Files with more than 3000 lines are skipped for automatic formatting
+- Format-on-save has a 1-second timeout to prevent editor hangs
+- Slow formatters are automatically detected and moved to format-after-save
+
+## 🔧 LSP, Formatters, and Linters Management
+
+This configuration uses [Mason](https://github.com/williamboman/mason.nvim) to easily manage Language Server Protocols (LSP), formatters, and linters. Mason provides a convenient user interface to install, update, and manage these tools directly from within Neovim.
+
+### Pre-configured Tools
+
+#### Language Servers
+- TypeScript (`ts_ls`)
+- HTML (`html`)
+- CSS (`cssls`)
+- Tailwind CSS (`tailwindcss`)
+- Svelte (`svelte`)
+- Lua (`lua_ls`)
+- GraphQL (`graphql`)
+- Emmet (`emmet_ls`)
+- Prisma (`prismals`)
+- Python (`pyright`)
+
+#### Formatters
+- Prettier (JavaScript, TypeScript, HTML, CSS, JSON, Markdown, etc.)
+- StyleLua (Lua)
+- isort (Python import sorting)
+- black (Python)
+- shfmt (Shell scripts)
+
+#### Linters
+- ESLint (JavaScript/TypeScript)
+- Pylint (Python)
+
+### Managing LSP and Tools
+
+- To open Mason's interface: `:Mason`
+- To install a new language server: `:MasonInstall <server-name>`
+- To see installed servers: `:Mason`
+- To update all tools: `:MasonUpdate`
+
+### Mason Configuration
+
+Mason is set up to automatically install and configure the specified language servers and tools. If you want to add more servers, you can modify the `mason.lua` configuration file:
+
+```lua
+mason_lspconfig.setup({
+  -- list of servers for mason to install
+  ensure_installed = {
+    "ts_ls",
+    "html",
+    -- Add more servers here
+  },
+})
+
+mason_tool_installer.setup({
+  ensure_installed = {
+    "prettier", -- prettier formatter
+    "stylua", -- lua formatter
+    -- Add more tools here
+  },
+})
+```
 
 ## Web-dev Icons
 
@@ -331,12 +570,105 @@ Vim is very complete and extensive in its utilities, here I put the ones that I 
 | [A-k]        | Jump to top (Buffer)                                |
 | [A-l]        | Jump to right (Buffer)                              |
 
+### Plugin-specific Shortcuts:
+
+#### Oil.nvim (File Explorer)
+
+| Keys    | Description                                     |
+| ------- | ----------------------------------------------- |
+| `<CR>`  | Select/Open file or directory                   |
+| `-`     | Navigate to parent directory                    |
+| `<C-p>` | Preview file                                    |
+| `<C-c>` | Close Oil                                       |
+| `<C-l>` | Refresh the file list                           |
+| `g?`    | Show help                                       |
+| `g.`    | Toggle hidden files                             |
+| `gx`    | Open file with external program                 |
+| `gs`    | Change sort order                               |
+
+#### Auto-session
+
+| Keys          | Description                   |
+| ------------- | ----------------------------- |
+| `<leader>wr`  | Restore session for directory |
+| `<leader>ws`  | Save session                  |
+
+#### Alpha Dashboard
+
+| Keys        | Description                      |
+| ----------- | -------------------------------- |
+| `e`         | Create a new file                |
+| `SPC e`     | Toggle file explorer             |
+| `SPC ff`    | Find file                        |
+| `SPC fs`    | Find string                      |
+| `SPC fg`    | Find word                        |
+| `SPC wr`    | Restore session                  |
+
+#### Linting
+
+| Keys        | Description                      |
+| ----------- | -------------------------------- |
+| `<leader>l` | Trigger linting for current file |
+
+### Treesitter Text Objects:
+
+This configuration includes the [nvim-treesitter-textobjects](https://github.com/nvim-treesitter/nvim-treesitter-textobjects) plugin that provides syntax-aware text objects. These text objects make it easier to select, delete, change, or operate on specific code structures.
+
+Unlike Vim's built-in text objects which are based on simple patterns, Treesitter text objects are powered by Treesitter's understanding of code structure. This means they work reliably across languages and properly handle nested structures, making code editing much more precise and efficient.
+
+#### Selection Text Objects:
+
+| Keys | Description |
+|------|-------------|
+| `a=` | Select outer part of an assignment region |
+| `i=` | Select inner part of an assignment region |
+| `a:` | Select outer part of a parameter/field region |
+| `i:` | Select inner part of a parameter/field region |
+| `ai` | Select outer part of a conditional region |
+| `ii` | Select inner part of a conditional region |
+| `al` | Select outer part of a loop region |
+| `il` | Select inner part of a loop region |
+| `ab` | Select outer part of a block region |
+| `ib` | Select inner part of a block region |
+| `af` | Select outer part of a function region |
+| `if` | Select inner part of a function region |
+| `ac` | Select outer part of a class region |
+| `ic` | Select inner part of a class region |
+
+#### Object Swapping:
+
+| Keys | Description |
+|------|-------------|
+| `<leader>on` | Swap object under cursor with next |
+| `<leader>op` | Swap object under cursor with previous |
+
+**Usage examples:**
+- `yaf` - Yank (copy) an entire function including its signature and braces
+- `dif` - Delete the inner part of a function (just the body, preserving signature)
+- `cac` - Change an entire class (delete and enter insert mode)
+- `vai` - Visually select an entire if statement
+
 ## Commands:
 
-| Command | Description      |
-| ------- | ---------------- |
-| :vs     | vertical split   |
-| :split  | horizontal split |
+| Command           | Description                                |
+| ----------------- | ------------------------------------------ |
+| `:vs`             | Create vertical split                      |
+| `:split`          | Create horizontal split                    |
+| `:StyleLua`       | Format current Lua file with StyleLua      |
+| `:StyleLuaConfig` | Edit StyleLua configuration file           |
+| `:LspRestart all` | Restart all LSP servers                    |
+| `:Mason`          | Open Mason package manager                 |
+| `:MasonInstall`   | Install a specific package                 |
+| `:MasonUninstall` | Uninstall a specific package               |
+| `:MasonUpdate`    | Update all installed packages              |
+| `:Oil`            | Open Oil file explorer for current dir     |
+| `:SessionSave`    | Save the current session                   |
+| `:SessionRestore` | Restore previously saved session           |
+| `:Telescope`      | Open Telescope with available pickers      |
+| `:Lazy`           | Open Lazy plugin manager                   |
+| `:Alpha`          | Show the dashboard                         |
+| `:TSUpdate`       | Update Treesitter parsers                  |
+| `:TSInstall`      | Install a specific Treesitter parser       |
 
 Some pluggins to try:
 
@@ -356,66 +688,66 @@ I've also stolen code from different sources which means it might be hard to ack
 
 To maximize the advanced search capabilities in Neovim, it's essential to properly compile the native components of FZF and Telescope. These tools significantly improve search speed compared to pure Lua implementations.
 
-### Requisitos previos para Windows
+### Windows Prerequisites
 
-1. **GCC y Make**: Necesarios para compilar los componentes nativos.
+1. **GCC and Make**: Required to compile native components.
    ```powershell
    choco install mingw make
    ```
 
-2. **CMake**: Requerido para algunos procesos de compilación.
+2. **CMake**: Required for some compilation processes.
    ```powershell
    choco install cmake
    ```
 
-3. **Rust** (opcional para ripgrep, una alternativa rápida para búsqueda de texto):
+3. **Rust** (optional for ripgrep, a fast alternative for text search):
    ```powershell
    choco install rust
    ```
 
-### Compilando telescope-fzf-native
+### Compiling telescope-fzf-native
 
-El plugin `telescope-fzf-native.nvim` requiere compilación para funcionar correctamente:
+The `telescope-fzf-native.nvim` plugin requires compilation to work properly:
 
-1. **En Windows (PowerShell)**:
+1. **On Windows (PowerShell)**:
    ```powershell
-   # Navegar al directorio del plugin
+   # Navigate to the plugin directory
    cd $env:LOCALAPPDATA\nvim-data\lazy\telescope-fzf-native.nvim
    
-   # Compilar usando make
+   # Compile using make
    make
    ```
 
-2. **En Linux/macOS**:
+2. **On Linux/macOS**:
    ```bash
-   # Navegar al directorio del plugin
+   # Navigate to the plugin directory
    cd ~/.local/share/nvim/lazy/telescope-fzf-native.nvim
-   # o en macOS
+   # or on macOS
    cd ~/.local/share/nvim/lazy/telescope-fzf-native.nvim
    
-   # Compilar
+   # Compile
    make
    ```
 
-En caso de problemas durante la compilación en Windows, puedes intentar con CMake:
+If you encounter problems during compilation on Windows, you can try with CMake:
    ```powershell
-   # Navegar al directorio del plugin
+   # Navigate to the plugin directory
    cd $env:LOCALAPPDATA\nvim-data\lazy\telescope-fzf-native.nvim
    
-   # Crear y entrar al directorio build
+   # Create and enter the build directory
    mkdir build
    cd build
    
-   # Configurar y compilar con CMake
+   # Configure and compile with CMake
    cmake -G "MinGW Makefiles" ..
    cmake --build .
    ```
 
-### Herramientas complementarias recomendadas
+### Recommended Complementary Tools
 
-Para mejorar la experiencia de búsqueda, se recomienda instalar:
+To improve the search experience, it's recommended to install:
 
-1. **ripgrep**: Una alternativa rápida a grep.
+1. **ripgrep**: A fast alternative to grep.
    ```powershell
    # Windows
    choco install ripgrep
@@ -427,7 +759,7 @@ Para mejorar la experiencia de búsqueda, se recomienda instalar:
    brew install ripgrep
    ```
 
-2. **fd**: Un reemplazo más rápido y amigable para `find`.
+2. **fd**: A faster and more user-friendly replacement for `find`.
    ```powershell
    # Windows
    choco install fd
@@ -439,25 +771,25 @@ Para mejorar la experiencia de búsqueda, se recomienda instalar:
    brew install fd
    ```
 
-### Verificando la instalación
+### Verifying the Installation
 
-Para verificar que telescope-fzf-native está correctamente compilado e instalado:
+To verify that telescope-fzf-native is correctly compiled and installed:
 
-1. Abre Neovim
-2. Ejecuta el siguiente comando:
+1. Open Neovim
+2. Run the following command:
    ```
    :lua print(require('telescope').extensions.fzf.loaded)
    ```
 
-Si muestra `true`, la extensión está cargada correctamente.
+If it shows `true`, the extension is loaded correctly.
 
-### Solución de problemas comunes
+### Common Troubleshooting
 
-- **Error "fzf no se pudo cargar"**: Verifica que la compilación se realizó correctamente usando el procedimiento anterior.
+- **Error "fzf could not be loaded"**: Verify that the compilation was done correctly using the procedure above.
   
-- **Rendimiento lento en búsquedas**: Asegúrate de que ripgrep está instalado y configurado correctamente en tu PATH.
+- **Slow search performance**: Make sure ripgrep is installed and properly configured in your PATH.
 
-- **Errores en Windows**: En algunos casos, puede ser necesario compilar manualmente con GCC:
+- **Errors on Windows**: In some cases, you may need to manually compile with GCC:
   ```powershell
   cd $env:LOCALAPPDATA\nvim-data\lazy\telescope-fzf-native.nvim
   gcc -O3 -Wall -Werror -fpic -std=gnu99 -shared src/fzf.c -o build/libfzf.dll
