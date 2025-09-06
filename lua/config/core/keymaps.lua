@@ -41,7 +41,11 @@ keymap.set("n", "<leader>S", ":%s//g<Left><Left>")
 keymap.set("n", "<leader><C-s>", ":%s//gc<Left><Left><Left>")
 
 -- Show line diagnostics
-keymap.set("n", "<leader>d", '<Cmd>lua vim.diagnostic.open_float(0, {scope = "line"})<CR>')
+keymap.set(
+    "n",
+    "<leader>d",
+    '<Cmd>lua vim.diagnostic.open_float(0, {scope = "line"})<CR>'
+)
 -- Open local diagnostics in local list
 keymap.set("n", "<leader>D", "<Cmd>lua vim.diagnostic.setloclist()<CR>")
 
@@ -49,21 +53,36 @@ keymap.set("n", "<leader>D", "<Cmd>lua vim.diagnostic.setloclist()<CR>")
 keymap.set("n", "<leader>vs", "<C-w>v", { desc = "Split window vertically" }) -- split window vertically
 keymap.set("n", "<leader>sh", "<C-w>s", { desc = "Split window horizontally" }) -- split window horizontally
 keymap.set("n", "<leader>se", "<C-w>=", { desc = "Make splits equal size" }) -- make split windows equal width & height
-keymap.set("n", "<leader>sx", "<cmd>close<CR>", { desc = "Close current split" }) -- close current split window
+keymap.set(
+    "n",
+    "<leader>sx",
+    "<cmd>close<CR>",
+    { desc = "Close current split" }
+) -- close current split window
 
 keymap.set("n", "<leader>to", "<cmd>tabnew<CR>", { desc = "Open new tab" }) -- open new tab
-keymap.set("n", "<leader>tx", "<cmd>tabclose<CR>", { desc = "Close current tab" }) -- close current tab
+keymap.set(
+    "n",
+    "<leader>tx",
+    "<cmd>tabclose<CR>",
+    { desc = "Close current tab" }
+) -- close current tab
 keymap.set("n", "<leader>tn", "<cmd>tabn<CR>", { desc = "Go to next tab" }) --  go to next tab
 keymap.set("n", "<leader>tp", "<cmd>tabp<CR>", { desc = "Go to previous tab" }) --  go to previous tab
-keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" }) --  move current buffer to new tab
+keymap.set(
+    "n",
+    "<leader>tf",
+    "<cmd>tabnew %<CR>",
+    { desc = "Open current buffer in new tab" }
+) --  move current buffer to new tab
 
 -- Highlight on yank
 vim.api.nvim_exec(
-	[[
+    [[
   augroup YankHighlight
     autocmd!
     autocmd TextYankPost * silent! lua vim.highlight.on_yank()
   augroup end
 ]],
-	false
+    false
 )
