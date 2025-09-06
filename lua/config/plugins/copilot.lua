@@ -6,8 +6,8 @@ return {
     event = "InsertEnter", -- Load only in insert mode
     config = function()
       require("copilot").setup({
-        suggestion = { enabled = false }, -- disables inline suggestions
-        panel = { enabled = false },
+        suggestion = { enabled = true }, -- disables inline suggestions
+        panel = { enabled = true },
         filetypes = {
           -- Performance optimizations
           ["*"] = true, -- Enable for all file types

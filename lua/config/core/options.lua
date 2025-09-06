@@ -5,7 +5,6 @@ vim.o.pumheight = 10
 vim.o.showmode = false
 vim.o.showtabline = 2 -- Always show tab line
 vim.o.title = true
-vim.o.termguicolors = true -- Use true colors, required for some plugins
 vim.o.lazyredraw = true
 vim.o.encoding = "utf-8"
 vim.wo.number = true
@@ -90,18 +89,32 @@ vim.opt.spell = true
 vim.opt.spelllang = { "en_us" }
 
 -- If the current system shell or the `shell` option is set to /usr/bin/fish then revert to sh
-if os.getenv("SHELL") == "/usr/bin/fish" or vim.opt.shell == "/usr/bin/fish" then
-	vim.opt.shell = "/bin/sh"
+if
+    os.getenv("SHELL") == "/usr/bin/fish"
+    or vim.opt.shell == "/usr/bin/fish"
+then
+    vim.opt.shell = "/bin/sh"
 else
-	-- Else default to the system current shell.
-	vim.opt.shell = os.getenv("SHELL")
+    -- Else default to the system current shell.
+    vim.opt.shell = os.getenv("SHELL")
 end
 
---vim.cmd([[
---let g:node_host_prog = 'C:\\ProgramData\\nvm\\v20.11.1\\node.exe'
---]])
---
+local is_windows = vim.loop.os_uname().version:match("Windows")
 
 --Shell usage
-vim.opt.shell = "pwsh"
+if is_windows then
+    vim.opt.shell = "pwsh"
+    vim.opt.shellcmdflag = "-NoLogo -NoProfile -Command"
+    vim.opt.shellquote = ""
+    vim.opt.shellxquote = ""
+else
+    vim.opt.shell = "/bin/bash"
+    vim.opt.shellcmdflag = "-c"
+end
+
 vim.opt.shellcmdflag = "-NoLogo -NoProfile -Command"
+vim.o.sessionoptions =
+    "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
+
+-- Set the background (dark or light)
+vim.o.background = "dark"

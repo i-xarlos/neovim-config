@@ -1,0 +1,18 @@
+# Configuration for StyLua
+# For more information, visit: https://github.com/JohnnyMorganz/StyLua
+
+# Indentation settings
+indent_width = 4
+indent_type = "Spaces"
+
+# Line width settings
+column_width = 80
+
+# Quote style
+quote_style = "AutoPreferDouble"
+
+# Call parenthesis style
+call_parentheses = "Always"
+
+# Format comments
+line_endings = "Unix"
