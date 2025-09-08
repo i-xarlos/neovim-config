@@ -2,14 +2,18 @@
 
 A powerful and efficient Neovim configuration designed for modern web development, featuring:
 
-- TypeScript, JavaScript, and React support
-- [Lazy.nvim](https://github.com/folke/lazy.nvim) package management
-- LSP (Language Server Protocol) integration
-- Code formatting with Prettier
-- Integrated snippets
-- Status line with Lualine
-- Git integration
-- Comprehensive linting
+- **TypeScript, JavaScript, and React support** with advanced LSP integration
+- **[Lazy.nvim](https://github.com/folke/lazy.nvim)** package management for lightning-fast startup
+- **Enhanced LSP** (Language Server Protocol) with performance optimizations
+- **Smart code formatting** with Prettier, StyleLua, Black, and more
+- **Advanced snippets** with LuaSnip integration
+- **Beautiful status line** with Lualine and modern UI components
+- **Comprehensive Git integration** with Gitsigns and Fugitive
+- **Intelligent linting** with nvim-lint for multiple languages
+- **GitHub Copilot integration** for AI-powered development
+- **Modern file exploration** with Oil.nvim and Telescope
+- **Session management** for seamless workflow continuation
+- **Cross-platform support** with detailed guides for Windows, macOS, and Linux
 - And much more...
 
 ## About
@@ -27,6 +31,34 @@ I've also incorporated select plugins and optimizations from [LunarVim](https://
 This configuration leverages the power of Lua with a carefully curated set of plugins, providing essential features for modern programming through the LSP protocol for intelligent code completion and analysis.
 
 This documentation serves as a comprehensive setup guide for new machine configurations.
+
+## 🆕 Recent Updates and Features
+
+This configuration has been significantly enhanced with the following modern features and optimizations:
+
+### Performance Optimizations
+- **Enhanced LSP Performance**: Optimized TypeScript/JavaScript language server configurations with selective feature disabling for large files
+- **Smart Formatting**: Automatic file size detection with intelligent formatting timeouts to prevent editor hangs
+- **Efficient Plugin Loading**: Lazy loading configuration for better startup times
+
+### New Plugins and Capabilities
+- **[nvim-lint](https://github.com/mfussenegger/nvim-lint)**: Advanced asynchronous linting for JavaScript, TypeScript, React, and Python
+- **[alpha-nvim](https://github.com/goolord/alpha-nvim)**: Beautiful dashboard with quick access to common actions
+- **[oil.nvim](https://github.com/stevearc/oil.nvim)**: Revolutionary file explorer that lets you edit your filesystem like a buffer
+- **[auto-session](https://github.com/rmagatti/auto-session)**: Automatic session management for seamless workflow continuation
+- **[nvim-surround](https://github.com/kylechui/nvim-surround)**: Modern surround text operations with intuitive keybindings
+- **[Comment.nvim](https://github.com/numToStr/Comment.nvim)**: Smart commenting with multi-language support
+
+### Enhanced Development Experience
+- **GitHub Copilot Integration**: Seamless AI-powered code completion through the unified nvim-cmp interface
+- **Advanced Formatting**: Multi-language formatting with Prettier, StyleLua, Black, and more
+- **Comprehensive LSP Setup**: Pre-configured language servers for TypeScript, Python, Lua, HTML, CSS, and more
+- **Smart Code Navigation**: Treesitter-powered text objects for precise code manipulation
+
+### Modern Toolchain Support
+- **Mason Integration**: Streamlined LSP, formatter, and linter management
+- **Telescope Enhancements**: FZF native integration for blazing-fast file and text search
+- **Git Integration**: Advanced git workflows with Gitsigns and Fugitive
 
 ## 🛠 Setting up
 
@@ -120,7 +152,7 @@ nvm install 16.17.1
 
 ### Linux
 
-The first step is to install the correct version of Neovim. Most plugins require version 0.5 or above, but `treesitter` actually requires >= 0.5.1. to work. Version 0.6 has now been relased, which means the previous comment is deprecated. Versions can be installed using `snap`:
+The first step is to install the correct version of Neovim. Most plugins require version 0.5 or above, but `treesitter` actually requires >= 0.5.1 to work. Version 0.9+ is now recommended for optimal performance. Versions can be installed using `snap`:
 
 ```bash
 # For stable versions
@@ -128,38 +160,323 @@ sudo snap install --beta nvim --classic
 
 # For nightly versions
 sudo snap install --edge nvim --classic
+
+# Alternative: Install via package manager
+# Ubuntu/Debian
+sudo apt update
+sudo apt install neovim
+
+# Fedora
+sudo dnf install neovim
+
+# Arch Linux
+sudo pacman -S neovim
 ```
 
-We also need to install the node package manager `npm` since most language servers are installed that way.
+Install essential development tools and dependencies:
 
 ```bash
-sudo apt install npm
+# Install Node.js and npm (most language servers require this)
+sudo apt install nodejs npm
+
+# Install build tools for compiling native components
+sudo apt install build-essential cmake
+
+# Install search tools for better Telescope performance
+sudo apt install ripgrep fd-find
+
+# Install Git (if not already installed)
+sudo apt install git
+
+# Install additional tools
+sudo apt install curl wget unzip
 ```
+
+**Global npm packages for Linux:**
+```bash
+# Essential packages
+npm install -g neovim prettier
+npm install -g typescript eslint_d
+npm install -g @fsouza/prettierd
+
+# Additional formatters
+npm install -g tree-sitter-cli
+```
+
+**Clone the configuration:**
+```bash
+# Remove existing config if any
+rm -rf ~/.config/nvim
+
+# Clone this configuration
+git clone https://github.com/i-xarlos/neovim-config.git ~/.config/nvim
+cd ~/.config/nvim
+```
+
+**Font installation for Linux:**
+```bash
+# Create fonts directory
+mkdir -p ~/.local/share/fonts
+
+# Download and install a Nerd Font (example with JetBrains Mono)
+cd /tmp
+wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/JetBrainsMono.zip
+unzip JetBrainsMono.zip -d JetBrainsMono
+cp JetBrainsMono/*.ttf ~/.local/share/fonts/
+
+# Refresh font cache
+fc-cache -fv
+```
+
+For a more comprehensive setup similar to macOS and Windows, refer to the detailed guides above.
 
 ### MacOS
 
-Assume `brew` is installed, then installing Neovim is straighforward:
+![nvim Home](./img/home1.png)
+
+#### Prerequisites
+
+First, install [Homebrew](https://brew.sh/) if you haven't already:
 
 ```bash
-# For stable version
-brew install neovim
-
-# for nightly version
-brew install --HEAD neovim
-
-# To update
-brew reinstall neovim
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-Additionally, you may need to configure the `Option` key to behave like `Alt`. In **iTerm2**, this can be done in `Preferences -> Profiles -> Keys`. Change the left option behaviour to `Esc+`. For **kitty**, you need to set `macos_option_as_alt left` (defualt is no) in the terminal's config file. Restarting the terminal (`Command + Q`, then restart) is required for this to take effect.
+#### Essential Tools Installation
+
+Install Neovim and essential development tools:
+
+```bash
+# Install Neovim (stable version)
+brew install neovim
+
+# For nightly version (more features, potentially less stable)
+brew install --HEAD neovim
+
+# Install Git (if not already installed)
+brew install git
+
+# Install Node.js and npm
+brew install node
+
+# Install essential build tools
+brew install gcc cmake make
+
+# Install search and file tools for better Telescope performance
+brew install ripgrep fd
+```
+
+#### Global npm packages
+
+Install essential global packages for optimal functionality:
+
+```bash
+# Core packages for Neovim
+npm install -g neovim
+npm install -g prettier
+
+# Additional useful packages for development
+npm install -g typescript
+npm install -g eslint_d
+npm install -g @fsouza/prettierd
+
+# Language servers (optional, can be installed via Mason instead)
+npm install -g typescript-language-server
+npm install -g vscode-langservers-extracted
+```
+
+#### Terminal Setup
+
+**Recommended Terminals:**
+- **[iTerm2](https://iterm2.com/)**: Feature-rich terminal with excellent customization
+- **[Kitty](https://sw.kovidgoyal.net/kitty/)**: Fast, GPU-accelerated terminal
+- **[Alacritty](https://alacritty.org/)**: Minimalist, high-performance terminal
+
+**Installing iTerm2:**
+```bash
+brew install --cask iterm2
+```
+
+**Installing Kitty:**
+```bash
+brew install --cask kitty
+```
+
+**Terminal Configuration:**
+
+For **iTerm2**, configure the Option key to behave like Alt:
+1. Open iTerm2 Preferences (`Cmd + ,`)
+2. Go to `Profiles → Keys → General`
+3. Set "Left Option Key" to `Esc+`
+
+For **Kitty**, add this to your `~/.config/kitty/kitty.conf`:
+```bash
+# Enable Option key as Alt
+macos_option_as_alt left
+
+# Font configuration (see Font Setup section below)
+font_family JetBrains Mono Nerd Font
+font_size 14.0
+```
+
+#### Font Setup
+
+Install a Nerd Font for proper icon display:
+
+```bash
+# Install popular Nerd Fonts
+brew tap homebrew/cask-fonts
+
+# Recommended fonts (choose one or install multiple)
+brew install --cask font-jetbrains-mono-nerd-font    # My recommendation
+brew install --cask font-cascadia-code-nerd-font
+brew install --cask font-fira-code-nerd-font
+brew install --cask font-hack-nerd-font
+brew install --cask font-source-code-pro-nerd-font
+```
+
+**Configure your terminal to use the installed font:**
+- **iTerm2**: `Preferences → Profiles → Text → Font`
+- **Kitty**: Add to `~/.config/kitty/kitty.conf`: `font_family JetBrains Mono Nerd Font`
+- **Alacritty**: Add to `~/.config/alacritty/alacritty.yml`:
+  ```yaml
+  font:
+    normal:
+      family: JetBrains Mono Nerd Font
+  ```
+
+#### Additional Development Tools
+
+Install additional tools for enhanced development experience:
+
+```bash
+# Python support (if you develop in Python)
+brew install python3
+pip3 install pynvim
+
+# Rust tools (for fast tools like ripgrep, fd)
+brew install rust
+
+# Tree-sitter CLI (for syntax highlighting)
+npm install -g tree-sitter-cli
+
+# Additional formatters and linters
+brew install stylua      # Lua formatter
+brew install shfmt       # Shell script formatter
+pip3 install black isort # Python formatters
+pip3 install pylint      # Python linter
+```
+
+#### Clone the Configuration
+
+Clone the repository to Neovim's configuration folder:
+
+```bash
+# Remove existing config if any
+rm -rf ~/.config/nvim
+
+# Clone this configuration
+git clone https://github.com/i-xarlos/neovim-config.git ~/.config/nvim
+cd ~/.config/nvim
+```
+
+#### Verify Installation
+
+Start Neovim and let it install plugins automatically:
+
+```bash
+nvim
+```
+
+On first startup:
+1. Lazy.nvim will automatically install all plugins
+2. Mason will install language servers and tools
+3. You may see some initial loading messages - this is normal
+4. Press `q` to close any plugin installation windows
+5. Run `:checkhealth` to verify everything is working
+
+#### Recommended macOS-specific Settings
+
+**Terminal Performance Optimization:**
+```bash
+# Add to your shell profile (~/.zshrc or ~/.bash_profile)
+export NVIM_TUI_ENABLE_TRUE_COLOR=1
+export TERM=xterm-256color
+
+# For Kitty users
+export TERM=xterm-kitty
+```
+
+**Additional macOS Integration:**
+```bash
+# Install clipboard support (should work out of the box)
+brew install pbcopy
+
+# For better performance with large files
+echo 'set clipboard=unnamed' >> ~/.config/nvim/lua/config/core/options.lua
+```
+
+#### Post-Installation Steps
+
+1. **Configure Git** (if not already done):
+   ```bash
+   git config --global user.name "Your Name"
+   git config --global user.email "your.email@example.com"
+   ```
+
+2. **Install Language Servers** via Mason:
+   - Open Neovim
+   - Run `:Mason`
+   - Install additional language servers as needed
+
+3. **Test Key Features:**
+   - Open a project folder: `nvim .`
+   - Test file finder: `<leader>ff`
+   - Test live grep: `<leader>fg`
+   - Test LSP features by opening a TypeScript/JavaScript file
+
+#### Troubleshooting macOS-specific Issues
+
+**If you encounter permission issues:**
+```bash
+# Fix npm permissions
+mkdir ~/.npm-global
+npm config set prefix '~/.npm-global'
+echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.zshrc
+source ~/.zshrc
+```
+
+**If fonts don't display correctly:**
+```bash
+# Clear font cache
+sudo atsutil databases -remove
+atsutil server -shutdown
+atsutil server -ping
+```
+
+**For M1/M2 Mac users:**
+- All tools should work natively with Apple Silicon
+- If you encounter issues with certain tools, try installing the x86 version:
+  ```bash
+  arch -x86_64 brew install <package-name>
+  ```
 
 ## ⭐ Installing the configuration
 
-Clone the repo into Neovim's installation folder (usually `/home/<usr>/.config/nvim`):
+**Note:** For detailed, platform-specific installation instructions including dependencies, fonts, and terminal setup, please refer to the comprehensive guides above for [Windows](#windows), [macOS](#macos), or [Linux](#linux).
+
+For a quick installation (assuming you have Neovim and dependencies already installed):
+
+Clone the repo into Neovim's installation folder:
 
 ```bash
+# Linux/macOS
 git clone https://github.com/i-xarlos/neovim-config.git ~/.config/nvim
 cd ~/.config/nvim
+
+# Windows
+git clone https://github.com/i-xarlos/neovim-config.git ~/AppData/Local/nvim
+cd ~/AppData/Local/nvim
 ```
 
 This will create a folder with the configuration with the following structure is as follows:
@@ -745,7 +1062,7 @@ If you encounter problems during compilation on Windows, you can try with CMake:
 
 ### Recommended Complementary Tools
 
-To improve the search experience, it's recommended to install:
+To improve the search experience, install these tools (already included in the macOS installation guide above):
 
 1. **ripgrep**: A fast alternative to grep.
    ```powershell
@@ -755,7 +1072,7 @@ To improve the search experience, it's recommended to install:
    ```bash
    # Linux
    sudo apt install ripgrep
-   # macOS
+   # macOS (covered in macOS setup above)
    brew install ripgrep
    ```
 
@@ -767,7 +1084,7 @@ To improve the search experience, it's recommended to install:
    ```bash
    # Linux
    sudo apt install fd-find
-   # macOS
+   # macOS (covered in macOS setup above)
    brew install fd
    ```
 
