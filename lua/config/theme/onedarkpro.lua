@@ -22,23 +22,21 @@ return {
             colors = {
                 onedark = { bg = "#FFFF00" }, -- yellow
                 onelight = { bg = "#00FF00" }, -- green
-                onedark_dark = { bg = "#222222" }, -- yellow
+                onedark_dark = { bg = "#282c34" }, -- black
             },
         })
 
-        local has_truecolor = os.getenv("COLORTERM") == "truecolor"
-            or os.getenv("TERM_PROGRAM") == "iTerm.app"
-            or os.getenv("TERM_PROGRAM") == "Apple_Terminal" and false
-
-        if has_truecolor then
+      local term_program = os.getenv("TERM_PROGRAM")
+    if term_program == "Apple_Terminal" then
+            --vim.opt.termguicolors = false
+            ---- Fallback 256-colors
+            ---- vim.cmd.colorscheme("default")
+            vim.cmd.colorscheme("industry")
+            ---- vim.cmd.colorscheme("elflord")
+    else
             vim.opt.termguicolors = true
             vim.cmd("colorscheme onedark_dark")
-        else
-            vim.opt.termguicolors = false
-            -- Fallback 256-colors
-            -- vim.cmd.colorscheme("default")
-            vim.cmd.colorscheme("industry")
-            -- vim.cmd.colorscheme("elflord")
-        end
+    end
+
     end,
 }
