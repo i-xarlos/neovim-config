@@ -97,32 +97,27 @@ return {
 			{ "hrsh7th/cmp-nvim-lua" },
 		},
 		config = function()
-			local lsp = require("lsp-zero")
-			lsp.extend_lspconfig()			
-			lsp.preset("recommended")			
-			lsp.on_attach(function()
-				-- Modern configuration for diagnostic icons
-				local signs = { Error = " ", Warn = " ", Hint = "", Info = " " }
-				for type, icon in pairs(signs) do
-					local hl = "DiagnosticSign" .. type
-					-- Highlighting configuration using the modern API
-					vim.api.nvim_set_hl(0, hl, { default = true })
-				end
-				-- Modern diagnostic configuration with icons
-				vim.diagnostic.config({
-					virtual_text = true,
-					signs = {
-						text = {
-							[vim.diagnostic.severity.ERROR] = signs.Error,
-							[vim.diagnostic.severity.WARN] = signs.Warn,
-							[vim.diagnostic.severity.HINT] = signs.Hint,
-							[vim.diagnostic.severity.INFO] = signs.Info,
-						},
+			-- Modern diagnostic configuration with icons
+			local signs = { Error = " ", Warn = " ", Hint = "", Info = " " }
+			for type, icon in pairs(signs) do
+				local hl = "DiagnosticSign" .. type
+				-- Highlighting configuration using the modern API
+				vim.api.nvim_set_hl(0, hl, { default = true })
+			end
+			-- Modern diagnostic configuration with icons
+			vim.diagnostic.config({
+				virtual_text = true,
+				signs = {
+					text = {
+						[vim.diagnostic.severity.ERROR] = signs.Error,
+						[vim.diagnostic.severity.WARN] = signs.Warn,
+						[vim.diagnostic.severity.HINT] = signs.Hint,
+						[vim.diagnostic.severity.INFO] = signs.Info,
 					},
-					underline = true,
-					severity_sort = true,
-				})
-			end)
+				},
+				underline = true,
+				severity_sort = true,
+			})
 
 			local keymap = vim.keymap -- for conciseness
 			local opts = { noremap = true, silent = true }					local on_attach = function(client, bufnr)
@@ -196,25 +191,25 @@ return {
 				keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary
 			end
 
-			-- import lspconfig plugin
-			local lspconfig = require("lspconfig")
 			-- import cmp-nvim-lsp plugin
 			local cmp_nvim_lsp = require("cmp_nvim_lsp")
 			-- used to enable autocompletion (assign to every lsp server config)
 			local capabilities = cmp_nvim_lsp.default_capabilities()
 
-			-- configure html server
-			lspconfig["html"].setup({
+			-- configure html server using the new vim.lsp.config API
+			vim.lsp.config.html = {
+				cmd = { 'vscode-html-language-server', '--stdio' },
+				filetypes = { 'html' },
+				root_markers = { '.git', 'package.json' },
 				capabilities = capabilities,
 				on_attach = on_attach,
-			})			-- configure typescript server with plugin
-			lspconfig["ts_ls"].setup({
+			}			-- configure typescript server with plugin using the new vim.lsp.config API
+			vim.lsp.config.ts_ls = {
+				cmd = { 'typescript-language-server', '--stdio' },
+				filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
+				root_markers = { 'tsconfig.json', 'package.json', '.git' },
 				capabilities = capabilities,
 				on_attach = on_attach,
-				--		root_dir = require("lspconfig.util").root_pattern(".git"),
-				root_dir = function(fname)
-					return require("lspconfig.util").root_pattern("tsconfig.json", "package.json")(fname)
-				end,
 				settings = {
 					ts_ls = {
 						exclude = { "node_modules", "dist", "build", ".git", "coverage", ".next", ".nuxt" },
@@ -233,22 +228,31 @@ return {
 					debounce_text_changes = 250, -- Aumentado de 150 a 250ms
 					allow_incremental_sync = true,
 				},
-			})
+			}
 
-			-- configure css server
-			lspconfig["cssls"].setup({
+			-- configure css server using the new vim.lsp.config API
+			vim.lsp.config.cssls = {
+				cmd = { 'vscode-css-language-server', '--stdio' },
+				filetypes = { 'css', 'scss', 'less' },
+				root_markers = { 'package.json', '.git' },
 				capabilities = capabilities,
 				on_attach = on_attach,
-			})
+			}
 
-			-- configure tailwindcss server
-			lspconfig["tailwindcss"].setup({
+			-- configure tailwindcss server using the new vim.lsp.config API
+			vim.lsp.config.tailwindcss = {
+				cmd = { 'tailwindcss-language-server', '--stdio' },
+				filetypes = { 'html', 'css', 'scss', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue', 'svelte' },
+				root_markers = { 'tailwind.config.js', 'tailwind.config.ts', 'tailwind.config.cjs', 'package.json', '.git' },
 				capabilities = capabilities,
 				on_attach = on_attach,
-			})
+			}
 
-			-- configure svelte server
-			lspconfig["svelte"].setup({
+			-- configure svelte server using the new vim.lsp.config API
+			vim.lsp.config.svelte = {
+				cmd = { 'svelteserver', '--stdio' },
+				filetypes = { 'svelte' },
+				root_markers = { 'package.json', 'svelte.config.js', 'svelte.config.cjs', 'svelte.config.mjs', '.git' },
 				capabilities = capabilities,
 				on_attach = function(client, bufnr)
 					on_attach(client, bufnr)
@@ -262,36 +266,49 @@ return {
 						end,
 					})
 				end,
-			})
+			}
 
-			-- configure prisma orm server
-			lspconfig["prismals"].setup({
+			-- configure prisma orm server using the new vim.lsp.config API
+			vim.lsp.config.prismals = {
+				cmd = { 'prisma-language-server', '--stdio' },
+				filetypes = { 'prisma' },
+				root_markers = { 'schema.prisma', 'package.json', '.git' },
 				capabilities = capabilities,
 				on_attach = on_attach,
-			})
+			}
 
-			-- configure graphql language server
-			lspconfig["graphql"].setup({
-				capabilities = capabilities,
-				on_attach = on_attach,
+			-- configure graphql language server using the new vim.lsp.config API
+			vim.lsp.config.graphql = {
+				cmd = { 'graphql-lsp', 'server', '-m', 'stream' },
 				filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
-			})
-
-			-- configure emmet language server
-			lspconfig["emmet_ls"].setup({
+				root_markers = { '.graphqlrc', '.graphqlrc.json', '.graphqlrc.yaml', '.graphqlrc.yml', 'graphql.config.js', 'graphql.config.ts', 'package.json', '.git' },
 				capabilities = capabilities,
 				on_attach = on_attach,
+			}
+
+			-- configure emmet language server using the new vim.lsp.config API
+			vim.lsp.config.emmet_ls = {
+				cmd = { 'emmet-ls', '--stdio' },
 				filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
-			})
-
-			-- configure python server
-			lspconfig["pyright"].setup({
+				root_markers = { 'package.json', '.git' },
 				capabilities = capabilities,
 				on_attach = on_attach,
-			})
+			}
 
-			-- configure lua server (with special settings)
-			lspconfig["lua_ls"].setup({
+			-- configure python server using the new vim.lsp.config API
+			vim.lsp.config.pyright = {
+				cmd = { 'pyright-langserver', '--stdio' },
+				filetypes = { 'python' },
+				root_markers = { 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt', 'Pipfile', 'pyrightconfig.json', '.git' },
+				capabilities = capabilities,
+				on_attach = on_attach,
+			}
+
+			-- configure lua server (with special settings) using the new vim.lsp.config API
+			vim.lsp.config.lua_ls = {
+				cmd = { 'lua-language-server' },
+				filetypes = { 'lua' },
+				root_markers = { '.luarc.json', '.luarc.jsonc', '.luacheckrc', '.stylua.toml', 'stylua.toml', 'selene.toml', 'selene.yml', '.git' },
 				capabilities = capabilities,
 				on_attach = on_attach,
 				settings = { -- custom settings for lua
@@ -309,7 +326,7 @@ return {
 						},
 					},
 				},
-			})
+			}
 					-- Configuration to close documentation floating windows with Esc
 			vim.api.nvim_create_autocmd("FileType", {
 				pattern = { "help", "markdown" },
