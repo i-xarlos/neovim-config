@@ -118,3 +118,20 @@ vim.o.sessionoptions =
 
 -- Set the background (dark or light)
 vim.o.background = "dark"
+
+local function path_exists(path)
+    local f = vim.loop.fs_stat(path)
+    if f ~= nil then
+        return true
+    else
+        return false
+    end
+end
+
+-- Add node to path for windows copilot
+local node_path = vim.fn.expand("C:\\ProgramData\\nvm\\v24.9.0\\")
+
+if path_exists(node_path) then
+    vim.env.PATH = node_path .. ";" .. vim.env.PATH
+end
+

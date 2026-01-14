@@ -1,30 +1,24 @@
 return {
     {
         "nvim-treesitter/nvim-treesitter",
-        event = { "BufReadPre", "BufNewFile" },
+        lazy = false,
         build = ":TSUpdate",
-        dependencies = {
-            "windwp/nvim-ts-autotag",
-        },
         config = function()
-            -- import nvim-treesitter plugin
-            local treesitter = require("nvim-treesitter.configs")
+            -- Use pcall to safely require the module
+            local status, configs = pcall(require, "nvim-treesitter")
+            if not status then
+                vim.notify("nvim-treesitter not found", vim.log.levels.WARN)
+                return
+            end
 
-            -- configure treesitter
-            treesitter.setup({ -- enable syntax highlighting
+            configs.setup({
                 highlight = {
                     enable = true,
                 },
-                -- enable indentation
                 indent = { enable = true },
-                -- enable autotagging (w/ nvim-ts-autotag plugin)
-                autotag = {
-                    enable = true,
-                },
-                -- ensure these language parsers are installed
                 ensure_installed = {},
-                sync_install = false, -- Don't install parsers on every startup
-                auto_install = false, -- Disable automatic installation for better control
+                sync_install = false,
+                auto_install = false,
                 incremental_selection = {
                     enable = true,
                     keymaps = {
@@ -34,13 +28,32 @@ return {
                         node_decremental = "<bs>",
                     },
                 },
-                parser_install_dir = vim.fn.stdpath("data")
-                    .. "/treesitter_cache",
-            }) -- Recommended configuration for ts_context_commentstring (outside of nvim-treesitter)
-            pcall(function()
-                require("ts_context_commentstring").setup({})
-            end)
-            vim.g.skip_ts_context_commentstring_module = true
+                -- Add textobjects configuration here
+                textobjects = {
+                    select = {
+                        enable = true,
+                        lookahead = true,
+                        keymaps = {
+                            ["a="] = {
+                                query = "@assignment.outer",
+                                desc = "Select outer part of an assignment region",
+                            },
+                            ["i="] = {
+                                query = "@assignment.inner",
+                                desc = "Select inner part of an assignment region",
+                            },
+                            ["a:"] = {
+                                query = "@parameter.outer",
+                                desc = "Select outer part of a parameter/field region",
+                            },
+                            ["i:"] = {
+                                query = "@parameter.inner",
+                                desc = "Select inner part of a parameter/field region",
+                            },
+                        },
+                    },
+                },
+            })
         end,
     },
 }

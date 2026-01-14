@@ -1,5 +1,6 @@
 return {
     "nvim-treesitter/nvim-treesitter-textobjects",
+    enabled = false, -- Temporarily disable to isolate the issue
     event = { "BufReadPost", "BufNewFile" },
     dependencies = {
         "nvim-treesitter/nvim-treesitter",

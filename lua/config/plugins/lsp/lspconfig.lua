@@ -136,20 +136,12 @@ return {
 				
 				-- Disable heavy LSP features based on client type
 				if client.name == "tsserver" or client.name == "ts_ls" then
-					-- Limit TypeScript features to improve performance
-					client.server_capabilities.documentFormattingProvider = false
-					
 					-- Use less frequent diagnostics for TypeScript/JavaScript files
 					if vim.bo[bufnr].filetype == "typescript" or vim.bo[bufnr].filetype == "javascript" then
 						vim.diagnostic.config({update_in_insert = false}, bufnr)
 					end
 				end
 				
-				-- Disable inline formatting for heavy clients
-				if client.name == "tsserver" or client.name == "ts_ls" or client.name == "eslint" then
-					client.server_capabilities.documentRangeFormattingProvider = false
-				end
-
 				-- set keybinds
 				opts.desc = "Show LSP references"
 				keymap.set("n", "gR", "<cmd>Telescope lsp_references<CR>", opts) -- show definition, references
