@@ -42,6 +42,7 @@ vim.opt.timeoutlen = 1000
 vim.opt.ttimeoutlen = 0
 vim.o.completeopt = "menuone,noinsert,noselect"
 vim.o.wildmode = "longest,full" -- Display auto-complete in Command Mode
+vim.opt.wildignore:append({ "*/backup/*" })
 vim.o.undofile = true -- Save undo history
 vim.o.updatetime = 250 -- Decrease update time
 vim.o.timeoutlen = 250 -- Time for mapped sequence to complete (in ms)
@@ -112,7 +113,6 @@ else
     vim.opt.shellcmdflag = "-c"
 end
 
-vim.opt.shellcmdflag = "-NoLogo -NoProfile -Command"
 vim.o.sessionoptions =
     "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
 

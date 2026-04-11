@@ -8,80 +8,6 @@ return {
 			vim.g.lsp_zero_extend_lspconfig = 0
 		end,
 	},
-	-- Autocompletion
-	{
-		"hrsh7th/nvim-cmp",
-		event = "InsertEnter",
-		dependencies = {
-			-- Snippets
-			{ "L3MON4D3/LuaSnip" },
-			{ "rafamadriz/friendly-snippets" },
-		},
-		config = function()
-			local lsp_zero = require("lsp-zero.api")
-			lsp_zero.extend_cmp()
-
-			local cmp = require("cmp")
-			local cmp_action = lsp_zero.cmp_action()
-
-			local luasnip = require("luasnip")
-			-- loads vscode style snippets from installed plugins (e.g. friendly-snippets)
-			require("luasnip.loaders.from_vscode").lazy_load()
-
-			cmp.setup({
-				completion = {
-					completeopt = "menu,menuone,preview,noselect",
-				},
-				snippet = { -- configure how nvim-cmp interacts with snippet engine
-					expand = function(args)
-						luasnip.lsp_expand(args.body)
-					end,
-				},
-				---- sources for autocompletion
-				sources = cmp.config.sources({
-					{ name = "copilot" },
-					{ name = "nvim_lsp" },
-					{ name = "luasnip" }, -- snippets
-					{ name = "buffer" }, -- text within current buffer
-					{ name = "path" }, -- file system paths
-					{ name = "spell" },
-				}),
-				mapping = cmp.mapping.preset.insert({
-					-- `Enter` key to confirm completion
-					["<CR>"] = cmp.mapping.confirm({ select = false }),
-
-					-- Ctrl+Space to trigger completion menu
-					["<C-Space>"] = cmp.mapping.complete(),
-
-					-- Navigate between snippet placeholder
-					["<C-f>"] = cmp_action.luasnip_jump_forward(),
-					["<C-b>"] = cmp_action.luasnip_jump_backward(),
-
-					-- Scroll up and down in the completion documentation
-					["<C-u>"] = cmp.mapping.scroll_docs(-4),
-					["<C-d>"] = cmp.mapping.scroll_docs(4),
-					["<Tab>"] = function(fallback)
-						if cmp.visible() then
-							cmp.select_next_item()
-						elseif luasnip.expand_or_jumpable() then
-							luasnip.expand_or_jump()
-						else
-							fallback()
-						end
-					end,
-					["<S-Tab>"] = function(fallback)
-						if cmp.visible() then
-							cmp.select_prev_item()
-						elseif luasnip.jumpable(-1) then
-							luasnip.jump(-1)
-						else
-							fallback()
-						end
-					end,
-				}),
-			})
-		end,
-	},
 	-- LSP
 	{
 		-- LSP Support
@@ -349,6 +275,20 @@ return {
 			})
 			
 			-- Optimization for large projects: disable diagnostics in insert mode
+			local function set_diagnostics_enabled(bufnr, enabled)
+				if vim.diagnostic.disable and vim.diagnostic.enable then
+					if enabled then
+						vim.diagnostic.enable(bufnr)
+					else
+						vim.diagnostic.disable(bufnr)
+					end
+					return
+				end
+				if vim.diagnostic.enable then
+					vim.diagnostic.enable(enabled, { bufnr = bufnr })
+				end
+			end
+			
 			vim.api.nvim_create_autocmd("FileType", {
 				pattern = {"javascript", "typescript", "javascriptreact", "typescriptreact"},
 				callback = function(ev)
@@ -356,14 +296,15 @@ return {
 					vim.api.nvim_create_autocmd("InsertEnter", {
 						buffer = ev.buf,
 						callback = function()
-							vim.diagnostic.disable(ev.buf)
+							set_diagnostics_enabled(ev.buf, false)
 						end,
-					})vim.api.nvim_create_autocmd("InsertLeave", {
+					})
+					vim.api.nvim_create_autocmd("InsertLeave", {
 						buffer = ev.buf,
 						callback = function()
 							-- Delay diagnostic reactivation to avoid freezing
 							vim.defer_fn(function()
-								vim.diagnostic.enable(ev.buf)
+								set_diagnostics_enabled(ev.buf, true)
 							end, 300)
 						end,
 					})
