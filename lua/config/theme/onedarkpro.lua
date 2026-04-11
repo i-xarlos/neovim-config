@@ -26,17 +26,16 @@ return {
             },
         })
 
-      local term_program = os.getenv("TERM_PROGRAM")
-    if term_program == "Apple_Terminal" then
-            --vim.opt.termguicolors = false
-            ---- Fallback 256-colors
-            ---- vim.cmd.colorscheme("default")
-            vim.cmd.colorscheme("industry")
-            ---- vim.cmd.colorscheme("elflord")
-    else
-            vim.opt.termguicolors = true
-            vim.cmd("colorscheme onedark_dark")
-    end
-
+        --local term_program = os.getenv("TERM_PROGRAM")
+        --if term_program == "Apple_Terminal" then
+        ----vim.opt.termguicolors = false
+        ------ Fallback 256-colors
+        ------ vim.cmd.colorscheme("default")
+        --vim.cmd.colorscheme("industry")
+        ------ vim.cmd.colorscheme("elflord")
+        --else
+        vim.opt.termguicolors = true
+        vim.cmd("colorscheme onedark_dark")
+        --end
     end,
 }
