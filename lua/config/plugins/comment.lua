@@ -3,7 +3,13 @@ return {
         "numToStr/Comment.nvim",
         event = { "BufReadPost", "BufNewFile" },
         dependencies = {
-            "JoosepAlviste/nvim-ts-context-commentstring",
+            {
+                "JoosepAlviste/nvim-ts-context-commentstring",
+                opts = {
+                    -- Avoid CursorHold updates that can fail when no parser/tree exists.
+                    enable_autocmd = false,
+                },
+            },
         },
         config = function()
             -- Configuración base del plugin
