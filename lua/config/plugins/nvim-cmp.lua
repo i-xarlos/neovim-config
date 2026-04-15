@@ -86,5 +86,11 @@ return {
         }),
       },
     })
+
+    -- Telescope has its own prompt handling; keep cmp off there to avoid
+    -- insert-time interactions with Tree-sitter in prompt buffers.
+    cmp.setup.filetype("TelescopePrompt", {
+      enabled = false,
+    })
   end,
 }

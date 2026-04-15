@@ -4,14 +4,14 @@ return {
     config = function()
         local conform = require("conform")
         local slow_format_filetypes = {}
+        local has_codespell = vim.fn.executable("codespell") == 1
 
         -- Optimizations for large files
         local max_filesize_format = 500 * 1024 -- 500KB for normal formatting
         local max_filesize_heavy = 200 * 1024 -- 200KB for heavy formatters like prettier
         local max_lines_format = 3000 -- Maximum number of lines for formatting
 
-        conform.setup({
-            formatters_by_ft = {
+        local formatters_by_ft = {
                 javascript = { "prettier" },
                 typescript = { "prettier" },
                 javascriptreact = { "prettier" },
@@ -28,8 +28,14 @@ return {
                 sh = { "shfmt" },
                 bash = { "shfmt" },
                 zsh = { "shfmt" },
-                ["*"] = { "codespell" }, -- spell-checking for all filetypes
-            },
+            }
+
+        if has_codespell then
+            formatters_by_ft["*"] = { "codespell" } -- spell-checking for all filetypes
+        end
+
+        conform.setup({
+            formatters_by_ft = formatters_by_ft,
 
             -- Formatting with performance optimizations
             format_on_save = function(bufnr)

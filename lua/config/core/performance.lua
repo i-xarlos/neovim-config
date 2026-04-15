@@ -30,6 +30,25 @@ vim.o.lazyredraw = true -- Don't redraw during macros and scripts
 vim.o.ttyfast = true -- Faster rendering
 vim.o.re = 0 -- Use modern regex engine
 
+-- Defensive guard for a Neovim 0.12 Tree-sitter async crash:
+-- treesitter.lua can throw "attempt to call method 'range' (a nil value)"
+-- from scheduled parser callbacks. Keep editor usable until upstream/parsers
+-- are fully in sync.
+do
+    local ts = vim.treesitter
+    if ts and ts.get_range and not vim.g._ts_get_range_guard_enabled then
+        local original_get_range = ts.get_range
+        ts.get_range = function(node, source, metadata)
+            local ok, range = pcall(original_get_range, node, source, metadata)
+            if ok and range then
+                return range
+            end
+            return { 0, 0, 0, 0, 0, 0 }
+        end
+        vim.g._ts_get_range_guard_enabled = true
+    end
+end
+
 -- Limit data sent to LSP server
 local ok, wf = pcall(require, "vim.lsp._watchfiles")
 if ok then

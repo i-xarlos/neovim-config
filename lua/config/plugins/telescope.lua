@@ -42,6 +42,9 @@ return {
                 },
                 path_display = { "truncate" },
                 dynamic_preview_title = true,
+                preview = {
+                    treesitter = false,
+                },
                 mappings = {
                     i = {
                         ["<C-k>"] = actions.move_selection_previous,
@@ -66,7 +69,6 @@ return {
                         "node_modules",
                     },
                     max_results = 200,
-                    previewer = false,
                 },
                 live_grep = {
                     max_results = 200,
@@ -83,6 +85,16 @@ return {
         })
 
         pcall(telescope.load_extension, "fzf")
+
+        -- Neovim 0.12 + some parser/plugin combinations can throw async
+        -- Tree-sitter errors when opening Telescope buffers. Disable TS for
+        -- Telescope UI buffers to keep the picker stable.
+        vim.api.nvim_create_autocmd("FileType", {
+            pattern = { "TelescopePrompt", "TelescopeResults", "TelescopePreview" },
+            callback = function(ev)
+                pcall(vim.treesitter.stop, ev.buf)
+            end,
+        })
 
         local builtin = require("telescope.builtin")
         local keymap = vim.keymap
