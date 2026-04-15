@@ -7,6 +7,11 @@ return {
     { "folke/snacks.nvim", opts = { input = {}, picker = {}, terminal = {} } },
   },
   config = function()
+    local ok_snacks, snacks = pcall(require, "snacks")
+    if ok_snacks and snacks and snacks.picker and snacks.picker.select then
+      vim.ui.select = snacks.picker.select
+    end
+
     ---@type opencode.Opts
     vim.g.opencode_opts = {
       -- Your configuration, if any — see `lua/opencode/config.lua`, or "goto definition" on the type or field.

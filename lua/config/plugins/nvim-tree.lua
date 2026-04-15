@@ -63,6 +63,21 @@ return {
             filters = {
                 dotfiles = false,
             },
+            filesystem_watchers = {
+                ignore_dirs = {
+                    "node_modules",
+                    ".git",
+                    "dist",
+                    "build",
+                    "coverage",
+                    ".next",
+                    ".nx",
+                    "windows",
+                    "out",
+                    "lib",
+                    "change"
+                },
+            },
         })
 
         -- set keymaps
