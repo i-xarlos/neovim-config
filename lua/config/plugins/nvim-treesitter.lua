@@ -24,31 +24,6 @@ return {
                     node_decremental = "<bs>",
                 },
             },
-            -- Add textobjects configuration here
-            textobjects = {
-                select = {
-                    enable = true,
-                    lookahead = true,
-                    keymaps = {
-                        ["a="] = {
-                            query = "@assignment.outer",
-                            desc = "Select outer part of an assignment region",
-                        },
-                        ["i="] = {
-                            query = "@assignment.inner",
-                            desc = "Select inner part of an assignment region",
-                        },
-                        ["a:"] = {
-                            query = "@parameter.outer",
-                            desc = "Select outer part of a parameter/field region",
-                        },
-                        ["i:"] = {
-                            query = "@parameter.inner",
-                            desc = "Select inner part of a parameter/field region",
-                        },
-                    },
-                },
-            },
         },
     },
 }
