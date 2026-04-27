@@ -35,8 +35,8 @@ vim.o.hidden = true -- Do not save when switching buffers
 vim.o.backup = false
 vim.o.swapfile = false -- Don't create Swap Files
 vim.o.fileencoding = "utf-8"
-vim.o.spell = true
-vim.o.spelllang = "en_us"
+vim.opt.spell = true
+vim.opt.spelllang = { "en_us", "es" }
 vim.opt.spelloptions = "camel"
 vim.opt.timeoutlen = 1000
 vim.opt.ttimeoutlen = 0
@@ -134,4 +134,3 @@ local node_path = vim.fn.expand("C:\\ProgramData\\nvm\\v24.9.0\\")
 if path_exists(node_path) then
     vim.env.PATH = node_path .. ";" .. vim.env.PATH
 end
-

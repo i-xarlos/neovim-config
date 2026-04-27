@@ -55,7 +55,7 @@ return {
 				
 				-- Disable LSP for large files
 				if line_count > max_line_count then
-					client.stop()
+					client:stop()
 					vim.notify("LSP stopped for this file (too large)", vim.log.levels.WARN)
 					return
 				end
@@ -179,7 +179,7 @@ return {
 						pattern = { "*.js", "*.ts" },
 						callback = function(ctx)
 							if client.name == "svelte" then
-								client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.file })
+								client:notify("$/onDidChangeTsOrJsFile", { uri = ctx.file })
 							end
 						end,
 					})

@@ -77,12 +77,20 @@ keymap.set(
 ) --  move current buffer to new tab
 
 -- Highlight on yank
-vim.api.nvim_exec(
-    [[
-  augroup YankHighlight
-    autocmd!
-    autocmd TextYankPost * silent! lua vim.highlight.on_yank()
-  augroup end
-]],
-    false
-)
+vim.api.nvim_set_hl(0, "YankHighlight", { link = "Visual", default = true })
+
+vim.keymap.set("n", "<leader>sl", function()
+    if
+        vim.opt.spelllang:get()[1] == "en_us"
+        and #vim.opt.spelllang:get() == 1
+    then
+        vim.opt.spelllang = "es"
+        print("Spell: Spanish")
+    elseif vim.opt.spelllang:get()[1] == "es" then
+        vim.opt.spelllang = { "en_us", "es" }
+        print("Spell: English & Spanish")
+    else
+        vim.opt.spelllang = "en_us"
+        print("Spell: English")
+    end
+end, { desc = "Toggle Spell Languages" })
