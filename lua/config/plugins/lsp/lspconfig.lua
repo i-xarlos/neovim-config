@@ -268,7 +268,10 @@ return {
 					if config.relative ~= "" then
 						-- If it's a floating window, map Esc to close it
 						vim.keymap.set("n", "<Esc>", function()
-							vim.api.nvim_win_close(win, true)
+							-- Validate window exists before closing
+							if vim.api.nvim_win_is_valid(win) then
+								vim.api.nvim_win_close(win, true)
+							end
 						end, { buffer = 0, silent = true, noremap = true })
 					end
 				end,

@@ -35,8 +35,8 @@ vim.o.hidden = true -- Do not save when switching buffers
 vim.o.backup = false
 vim.o.swapfile = false -- Don't create Swap Files
 vim.o.fileencoding = "utf-8"
-vim.opt.spell = true
-vim.opt.spelllang = { "en_us", "es" }
+vim.opt.spell = true -- Enable spell checking
+vim.opt.spelllang = { "en_us" } -- Default to English (auto-detected per file)
 vim.opt.spelloptions = "camel"
 vim.opt.timeoutlen = 1000
 vim.opt.ttimeoutlen = 0
@@ -48,7 +48,6 @@ vim.o.updatetime = 250 -- Decrease update time
 vim.o.timeoutlen = 250 -- Time for mapped sequence to complete (in ms)
 vim.o.inccommand = "nosplit" -- Incremental live completion
 vim.g.do_file_type_lua = 1
-vim.o.spelllang = "en"
 vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
 vim.opt.shortmess:append({ W = true, a = true })
 --vim.opt.cursorcolumn     = true
@@ -84,10 +83,6 @@ vim.g.loaded_netrwPlugin = 0
 -- in millisecond, used for both CursorHold and CursorHoldI,
 -- use update time instead if not defined
 vim.g.cursorhold_updatetime = 100
-
--- enable spell
-vim.opt.spell = true
-vim.opt.spelllang = { "en_us" }
 
 -- If the current system shell or the `shell` option is set to /usr/bin/fish then revert to sh
 if
