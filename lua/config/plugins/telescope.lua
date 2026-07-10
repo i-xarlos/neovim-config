@@ -40,6 +40,9 @@ return {
                     "--glob",
                     "!*.rar",
                 },
+                preview = {
+                    treesitter = false,
+                },
                 path_display = { "truncate" },
                 dynamic_preview_title = true,
                 preview = {

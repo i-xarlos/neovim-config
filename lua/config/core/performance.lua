@@ -48,6 +48,21 @@ do
         end
         vim.g._ts_get_range_guard_enabled = true
     end
+
+    -- Additional guard for Neovim 0.12 runtime errors such as:
+    -- _range.lua:137: attempt to get length of local 'r' (a nil value)
+    -- bubbling through vim.treesitter.get_node_text() during highlighting.
+    if is_nvim_012 and ts and ts.get_node_text and not vim.g._ts_get_node_text_guard_enabled then
+        local original_get_node_text = ts.get_node_text
+        ts.get_node_text = function(node, source, opts)
+            local ok, text = pcall(original_get_node_text, node, source, opts)
+            if ok then
+                return text
+            end
+            return ""
+        end
+        vim.g._ts_get_node_text_guard_enabled = true
+    end
 end
 
 -- Limit data sent to LSP server
